@@ -31,6 +31,8 @@ function checkExecutorName()
     print("Executor Name: " .. tostring(executorName))
 end
 
+print("\n")
+
 checkExecutorName()
 task.wait(2)
 
@@ -102,8 +104,11 @@ task.wait(1) -- 1-second delay between checks
 checkCheckCaller()
 task.wait(1)
 
-print("\n")
+
 -- Display test results at the end
 print("✅ Total Tests passed: " .. passedTests)
 print("❌ Total Tests failed: " .. failedTests)
-print("Success Rate: " .. (passedTests / totalTests * 100) .. "% (" .. passedTests .. " out of " .. totalTests .. ")")
+
+-- Format the success rate to two decimal places
+local successRate = totalTests > 0 and (passedTests / totalTests * 100) or 0
+print(string.format("Success Rate: %.2f%% (%d out of %d)", successRate, passedTests, totalTests))
