@@ -1,0 +1,65 @@
+
+local function isValidFunction(func)
+    return type(func) == "function"
+end
+
+
+local function isValidInstance(instance)
+    return typeof(instance) == "Instance"
+end
+
+
+function checkUpvalue(func, upvalueIndex, expectedUpvalue)
+    print("Starting Extra ENV check: debug.getupvalue")
+
+ 
+    if not isValidFunction(func) then
+        print("❌ Invalid function provided to debug.getupvalue check.")
+        return
+    end
+    
+    local name, value = debug.getupvalue(func, upvalueIndex)
+    
+    if value == expectedUpvalue then
+        print("✅ debug.getupvalue passed with expected value: " .. tostring(value))
+    else
+        print("❌ debug.getupvalue failed: expected " .. tostring(expectedUpvalue) .. " but got " .. tostring(value))
+    end
+end
+
+
+function checkHiddenProperty(instance, propertyName, expectedValue, expectedIsHidden)
+    print("Starting Extra ENV check: gethiddenproperty")
+
+    
+    if not isValidInstance(instance) then
+        print("❌ Invalid instance provided to gethiddenproperty check.")
+        return
+    end
+
+    local property, isHidden = gethiddenproperty(instance, propertyName)
+    
+    if property == expectedValue and isHidden == expectedIsHidden then
+        print("✅ gethiddenproperty passed with expected value: " .. tostring(property) .. " and isHidden: " .. tostring(isHidden))
+    else
+        print("❌ gethiddenproperty failed: expected value " .. tostring(expectedValue) 
+            .. " and isHidden " .. tostring(expectedIsHidden) 
+            .. " but got value " .. tostring(property) 
+            .. " and isHidden " .. tostring(isHidden))
+    end
+end
+
+
+local upvalue = function() end
+local function test()
+    print(upvalue)
+end
+
+
+checkUpvalue(test, 1, upvalue)
+task.wait(1) 
+
+
+local fire = Instance.new("Fire")
+checkHiddenProperty(fire, "size_xml", 5, true)
+task.wait(1) 
