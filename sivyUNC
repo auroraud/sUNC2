@@ -1,20 +1,37 @@
-
+-- Utility function to validate if an object is a function
 local function isValidFunction(func)
     return type(func) == "function"
 end
 
-
+-- Utility function to validate if an instance is valid
 local function isValidInstance(instance)
     return typeof(instance) == "Instance"
 end
 
 
-function checkUpvalue(func, upvalueIndex, expectedUpvalue)
-    print("Starting Extra ENV check: debug.getupvalue")
 
- 
+
+function checkExecutorName()
+    print("Start sivyUNC check..")
+    print("Grabbing executor name:")
+    
+    local executorName = identifyexecutor() -- Grab the executor name
+    print("Executor Name: " .. tostring(executorName))
+end
+
+
+
+checkExecutorName()
+
+wait(2)
+
+
+function checkUpvalue(func, upvalueIndex, expectedUpvalue)
+
+
+    -- Ensure the provided function is valid
     if not isValidFunction(func) then
-        print("❌ Invalid function provided to debug.getupvalue check.")
+        warn("❌ Invalid function provided to debug.getupvalue check.")
         return
     end
     
@@ -23,17 +40,17 @@ function checkUpvalue(func, upvalueIndex, expectedUpvalue)
     if value == expectedUpvalue then
         print("✅ debug.getupvalue passed with expected value: " .. tostring(value))
     else
-        print("❌ debug.getupvalue failed: expected " .. tostring(expectedUpvalue) .. " but got " .. tostring(value))
+        warn(" ❌ debug.getupvalue failed: expected " .. tostring(expectedUpvalue) .. " but got " .. tostring(value))
     end
 end
 
-
+-- Check for gethiddenproperty
 function checkHiddenProperty(instance, propertyName, expectedValue, expectedIsHidden)
-    print("Starting Extra ENV check: gethiddenproperty")
+  
 
-    
+
     if not isValidInstance(instance) then
-        print("❌ Invalid instance provided to gethiddenproperty check.")
+        warn("❌ Invalid instance provided to gethiddenproperty check.")
         return
     end
 
@@ -42,7 +59,7 @@ function checkHiddenProperty(instance, propertyName, expectedValue, expectedIsHi
     if property == expectedValue and isHidden == expectedIsHidden then
         print("✅ gethiddenproperty passed with expected value: " .. tostring(property) .. " and isHidden: " .. tostring(isHidden))
     else
-        print("❌ gethiddenproperty failed: expected value " .. tostring(expectedValue) 
+        warn("❌ gethiddenproperty failed: expected value " .. tostring(expectedValue) 
             .. " and isHidden " .. tostring(expectedIsHidden) 
             .. " but got value " .. tostring(property) 
             .. " and isHidden " .. tostring(isHidden))
@@ -50,16 +67,31 @@ function checkHiddenProperty(instance, propertyName, expectedValue, expectedIsHi
 end
 
 
+function checkCheckCaller()
+
+    
+    if checkcaller() then
+        print("✅ checkcaller passed: Main scope returned true.")
+    else
+        warn("❌ checkcaller failed: Main scope did not return true.")
+    end
+end
+
+-- Test for debug.getupvalue
 local upvalue = function() end
 local function test()
     print(upvalue)
 end
 
-
+-- Add delay between checks
 checkUpvalue(test, 1, upvalue)
-task.wait(1) 
+task.wait(1) -- 1-second delay between checks
 
 
 local fire = Instance.new("Fire")
 checkHiddenProperty(fire, "size_xml", 5, true)
-task.wait(1) 
+task.wait(1) -- 1-second delay between checks
+
+
+checkCheckCaller()
+task.wait(1)
